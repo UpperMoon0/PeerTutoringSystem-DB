@@ -15,11 +15,8 @@ COPY --chmod=755 entrypoint.sh /entrypoint.sh
 RUN dos2unix /entrypoint.sh
 
 # The mssql user needs ownership of the database scripts to run them
-RUN chown -R mssql:mssql /db_scripts && chown mssql:mssql /entrypoint.sh
-
-
-USER mssql
+RUN chown -R mssql:mssql /db_scripts && chown root:root /entrypoint.sh
 
 EXPOSE 1433
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
