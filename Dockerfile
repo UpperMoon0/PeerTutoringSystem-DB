@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/mssql/server:2022-latest
 
 USER root
 
-ENV SA_PASSWORD=yourStrong(!)Password
+ENV SA_PASSWORD=Password123!
 ENV ACCEPT_EULA=Y
 
 # Install prerequisites and mssql-tools
@@ -11,8 +11,10 @@ RUN apt-get update && apt-get install -y curl gnupg ca-certificates gosu dos2uni
     ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
 
 COPY db_scripts/ /db_scripts/
+COPY entrypoint.sh /entrypoint.sh
 # The mssql user needs ownership of the database scripts to run them
 RUN chown -R mssql:mssql /db_scripts
+RUN chmod +x /entrypoint.sh
 
 # Add execute permission to the sqlservr binary
 RUN chown -R mssql:mssql /opt/mssql && chmod -R 750 /opt/mssql
@@ -21,4 +23,4 @@ USER mssql
 
 EXPOSE 1433
 
-CMD ["/opt/mssql/bin/sqlservr"]
+ENTRYPOINT ["/entrypoint.sh"]
