@@ -11,12 +11,11 @@ RUN apt-get update && apt-get install -y curl gnupg ca-certificates gosu dos2uni
     ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
 
 COPY db_scripts/ /db_scripts/
-COPY --chmod=755 entrypoint.sh /entrypoint.sh
-RUN dos2unix /entrypoint.sh
-
 # The mssql user needs ownership of the database scripts to run them
-RUN chown -R mssql:mssql /db_scripts && chown root:root /entrypoint.sh
+RUN chown -R mssql:mssql /db_scripts
+
+USER mssql
 
 EXPOSE 1433
 
-ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+CMD ["/opt/mssql/bin/sqlservr"]
