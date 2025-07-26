@@ -1,19 +1,17 @@
 #!/bin/bash
 
-run_initialization() {
-  # Wait for 30 seconds for SQL Server to start
-  echo "Waiting for SQL Server to start..."
-  sleep 30
+# Start the SQL Server process in the background
+/opt/mssql/bin/sqlservr &
 
-  echo "Running database initialization scripts..."
-  # Run the init and seed scripts
-  /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -d master -i /db_scripts/Init.sql
-  /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -d master -i /db_scripts/SeedData.sql
-  echo "Database initialization complete."
-}
+# Wait for SQL Server to start
+echo "Waiting for SQL Server to start..."
+sleep 30
 
-# Run the initialization in the background
-run_initialization &
+# Run the initialization scripts
+echo "Running database initialization scripts..."
+/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -i /db_scripts/Init.sql
+/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -i /db_scripts/SeedData.sql
+echo "Database initialization complete."
 
-# Start the SQL Server process
-exec /opt/mssql/bin/sqlservr
+# Keep the container running
+wait
