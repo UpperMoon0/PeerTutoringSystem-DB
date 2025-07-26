@@ -12,6 +12,13 @@ set SEED_SCRIPT=SeedData.sql
 set INIT_SCRIPT_PATH="%SCRIPT_DIR%%INIT_SCRIPT%"
 set SEED_SCRIPT_PATH="%SCRIPT_DIR%%SEED_SCRIPT%"
 
+REM Check if reseed has already been done
+docker exec %CONTAINER_NAME% test -f /var/opt/mssql/reseed_done.flag
+if %ERRORLEVEL% equ 0 (
+    echo Reseed has already been performed. Skipping.
+    goto :eof
+)
+
 REM Create scripts directory in container
 docker exec -i %CONTAINER_NAME% mkdir -p /var/opt/mssql/scripts
 
@@ -28,6 +35,10 @@ REM Execute scripts
 docker exec -i %CONTAINER_NAME% /opt/mssql-tools18/bin/sqlcmd -U %DB_USER% -P %DB_PASSWORD% -i "/var/opt/mssql/scripts/%INIT_SCRIPT%" -C -N
 docker exec -i %CONTAINER_NAME% /opt/mssql-tools18/bin/sqlcmd -U %DB_USER% -P %DB_PASSWORD% -i "/var/opt/mssql/scripts/%SEED_SCRIPT%" -C -N
 
+REM Create a flag file to indicate that reseed is done
+docker exec -i %CONTAINER_NAME% touch /var/opt/mssql/reseed_done.flag
+
 echo Database reseeding complete.
 
+:eof
 endlocal
