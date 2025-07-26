@@ -6,7 +6,6 @@ ENV SA_PASSWORD=yourStrong(!)Password
 ENV ACCEPT_EULA=Y
 
 # Install prerequisites and mssql-tools
-# Install prerequisites and mssql-tools.
 # The base image already contains the microsoft prod repo, so we don't need to add it again.
 RUN apt-get update && apt-get install -y curl gnupg ca-certificates gosu && \
     ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
@@ -17,7 +16,6 @@ COPY --chmod=755 entrypoint.sh /entrypoint.sh
 # The mssql user needs ownership of the database scripts to run them
 RUN chown -R mssql:mssql /db_scripts && chown root:root /entrypoint.sh
 
-USER mssql
 
 EXPOSE 1433
 
