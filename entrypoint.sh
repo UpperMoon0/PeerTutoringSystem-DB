@@ -12,11 +12,16 @@ do
     if [ $? -eq 0 ]
     then
         echo "SQL Server is up"
-        # Run the initialization scripts
-        echo "Running database initialization scripts..."
-        /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -i /db_scripts/Init.sql
-        /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -i /db_scripts/SeedData.sql
-        echo "Database initialization complete."
+        if [ ! -f /var/opt/mssql/data/.initialized ]; then
+            # Run the initialization scripts
+            echo "Running database initialization scripts..."
+            /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -i /db_scripts/Init.sql
+            /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -i /db_scripts/SeedData.sql
+            echo "Database initialization complete."
+            touch /var/opt/mssql/data/.initialized
+        else
+            echo "Database already initialized."
+        fi
         break
     else
         echo "Not ready yet..."
