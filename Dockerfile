@@ -19,4 +19,4 @@ RUN chown -R mssql:mssql /db_scripts && chown root:root /entrypoint.sh
 
 EXPOSE 1433
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
