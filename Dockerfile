@@ -14,6 +14,9 @@ COPY db_scripts/ /db_scripts/
 # The mssql user needs ownership of the database scripts to run them
 RUN chown -R mssql:mssql /db_scripts
 
+# Add execute permission to the sqlservr binary
+RUN chmod +x /opt/mssql/bin/sqlservr
+
 USER mssql
 
 EXPOSE 1433
