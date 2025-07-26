@@ -15,7 +15,7 @@ COPY db_scripts/ /db_scripts/
 RUN chown -R mssql:mssql /db_scripts
 
 # Add execute permission to the sqlservr binary
-RUN chmod +x /opt/mssql/bin/sqlservr
+RUN chown -R mssql:mssql /opt/mssql && chmod -R 750 /opt/mssql
 
 USER mssql
 
